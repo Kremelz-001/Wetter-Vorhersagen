@@ -7,7 +7,7 @@ def gradient_descent(x,y):
     m_c=b_c=0               #random assumed unknown values
     i=1000                   #number of iterations
     n=len(x)
-    learningrate=0.001      #the coefficient that controls the rate of converge to the optimized state
+    learningrate=0.01      #the coefficient that controls the rate of converge to the optimized state
 
     
     for s in range(i):

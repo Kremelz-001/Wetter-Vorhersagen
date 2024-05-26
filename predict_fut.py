@@ -133,3 +133,66 @@ plt.title('Comparative Predictions for Maximum Temperature')
 plt.show()
 
 
+
+
+
+
+
+
+
+
+#---------------------------------------------------------\
+
+
+# Remove NaN rows
+weather = weather.dropna()
+
+# Update predictors after feature engineering
+predictors = weather.columns[~weather.columns.isin(["target", "name", "station"])]
+
+# Train the model with past data
+# Train the model with past data
+rr.fit(weather[predictors].values, weather["target"].values)
+
+# Define function to predict future weather
+
+
+
+def predict_future(weather, model, predictors, start_date, end_date):
+    future_dates = pd.date_range(start=start_date, end=end_date, freq='D')
+    future_weather = pd.DataFrame(index=future_dates, columns=predictors)
+    
+    for date in future_dates:
+        recent_data = weather[weather.index <= date].iloc[-1]
+        prediction = model.predict([recent_data[predictors]])
+        future_weather.loc[date] = prediction
+    
+    # Assign valid feature names to the DataFrame
+    future_weather.columns = predictors
+    
+    return future_weather
+
+# Define start and end dates for future prediction (next week)
+start_date = weather.index[-1] + pd.Timedelta(days=1)
+end_date = start_date + pd.Timedelta(days=6)  # Predict for the next 7 days
+
+# Predict future weather for the next week
+future_weather = predict_future(weather, rr, predictors, start_date, end_date)
+
+# Print the predicted weather for the next week
+print("Predicted weather for the next week:")
+print(future_weather)
+
+# Plot the predicted temperatures
+future_weather["tmax"].plot(label="Predicted Max Temp")
+#weather["tmax"].plot(label="Historical Max Temp")
+plt.xlabel("Date")
+plt.ylabel("Temperature (°C)")
+plt.title("Predicted Max Temperature for the Next Week")
+plt.legend()
+plt.show()
+
+
+
+
+
